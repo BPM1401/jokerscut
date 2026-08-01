@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pod Cut — The Joker's Cut</title>
+<meta name="description" content="Seven AI podcast summaries, each dealt a fixed word count. The shuffle is the editorial — the constraint is the point.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --bg-card: #16151d;
+    --bg-card-border: #26242f;
+    --ink: #ececf1;
+    --ink-dim: #a5a3b0;
+    --ink-faint: #6b6976;
+    --accent: #7F77DD;
+    --accent-dim: rgba(127, 119, 221, 0.35);
+    --suit-heart: #d9647a;
+    --suit-spade: #c9c7d1;
+    --suit-diamond: #e0a45f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--bg); }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, var(--accent-dim), transparent),
+      var(--bg);
+  }
+
+  header.site {
+    padding: 4.5rem 1.5rem 3rem;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .kicker {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 1rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
+    line-height: 1.05;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .tagline {
+    color: var(--ink-dim);
+    font-size: 1.05rem;
+    max-width: 46ch;
+    margin: 0 auto 1.75rem;
+  }
+
+  .deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 0.6rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--ink-faint);
+  }
+
+  .deck span.num {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 1.25rem 5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 70%);
+    opacity: 0.8;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .card-id {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+
+  .word-count {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--accent);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .word-count .label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin-top: 0.3rem;
+    text-align: right;
+  }
+
+  .show-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.005em;
+  }
+
+  .host-line {
+    font-size: 0.88rem;
+    color: var(--ink-dim);
+    margin: 0 0 1rem;
+  }
+
+  .host-line .host-name {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    margin-bottom: 1.1rem;
+    border: 1px solid;
+  }
+
+  .verdict .suit {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .verdict.heart {
+    color: var(--suit-heart);
+    border-color: rgba(217, 100, 122, 0.4);
+    background: rgba(217, 100, 122, 0.08);
+  }
+
+  .verdict.spade {
+    color: var(--suit-spade);
+    border-color: rgba(201, 199, 209, 0.3);
+    background: rgba(201, 199, 209, 0.06);
+  }
+
+  .verdict.diamond {
+    color: var(--suit-diamond);
+    border-color: rgba(224, 164, 95, 0.4);
+    background: rgba(224, 164, 95, 0.08);
+  }
+
+  .body-text {
+    font-size: 0.97rem;
+    color: var(--ink-dim);
+    margin: 0 0 1.2rem;
+  }
+
+  .listen-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(127, 119, 221, 0.35);
+    padding-bottom: 0.1rem;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .listen-link:hover,
+  .listen-link:focus-visible {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .listen-link .arrow {
+    font-size: 0.9em;
+    transition: transform 0.2s ease;
+  }
+
+  .listen-link:hover .arrow {
+    transform: translate(1px, -1px);
+  }
+
+  .jester-mark {
+    position: fixed;
+    right: 1.1rem;
+    bottom: 1.1rem;
+    width: 34px;
+    height: auto;
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  footer.site {
+    max-width: 640px;
+    margin: 2rem auto 0;
+    padding: 2.5rem 1.5rem 0;
+    border-top: 1px solid var(--bg-card-border);
+    text-align: center;
+  }
+
+  footer.site p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    margin: 0 0 1.5rem;
+  }
+
+  footer.site .brand {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  @media (min-width: 700px) {
+    .card { padding: 2.1rem 2rem; }
+  }
+
+  .kicker-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .kicker-link:hover,
+  .kicker-link:focus-visible { opacity: 0.7; }
+
+  .footer-cta {
+    display: block;
+    text-align: left;
+    text-decoration: none;
+    background: var(--bg-card);
+    border: 1px solid var(--accent-dim);
+    border-radius: 12px;
+    padding: 1.2rem 1.3rem;
+    margin: 0 0 1.75rem;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .footer-cta:hover,
+  .footer-cta:focus-visible {
+    border-color: var(--accent);
+    background: rgba(127, 119, 221, 0.06);
+  }
+
+  .footer-cta:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .footer-cta-kicker {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-cta-title {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 0.35rem;
+  }
+
+  .footer-cta-meta {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: var(--ink-dim);
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<header class="site">
+  <p class="kicker"><a class="kicker-link" href="../">← The Joker's Cut</a></p>
+  <h1>The Pod Cut</h1>
+  <p class="tagline">Seven AI podcasts. Each summary dealt a fixed word count. The shuffle is the editorial — the constraint is the point.</p>
+  <div class="deck">
+    <span>The deck:</span>
+    <span class="num">21</span>·<span class="num">52</span>·<span class="num">54</span>·<span class="num">77</span>·<span class="num">88</span>·<span class="num">112</span>·<span class="num">114</span>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 01</span>
+        <span class="word-count">21<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Machine Learning Street Talk</h2>
+      <p class="host-line"><span class="host-name">Dr. Tim Scarfe</span> · Technical Rigor</p>
+      <div class="verdict spade"><span class="suit">♠</span> Fold the hype</div>
+      <p class="body-text">The only podcast that will make you feel intellectually inadequate — then rebuild you. Math required. Hype forbidden. Bring your priors to be destroyed.</p>
+      <a class="listen-link" href="https://podcasts.apple.com/us/podcast/machine-learning-street-talk-mlst/id1510472996" target="_blank" rel="noopener noreferrer">Listen on Apple Podcasts <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 02</span>
+        <span class="word-count">52<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Interconnects</h2>
+      <p class="host-line"><span class="host-name">Nathan Lambert</span> · Post-Training &amp; Alignment</p>
+      <div class="verdict heart"><span class="suit">♥</span> Play</div>
+      <p class="body-text">Most AI coverage focuses on what a model can do at launch. Nathan Lambert asks the harder question: what happened between pre-training and the product you're using? Interconnects covers RLHF, DPO, and the open-weights alignment landscape with a precision that no other podcast matches. If you want to understand why a model behaves the way it does — not just what it outputs — this is where you start. The hand everyone else is folding, Lambert is playing.</p>
+      <a class="listen-link" href="https://podcasts.apple.com/us/podcast/interconnects/id1719552353" target="_blank" rel="noopener noreferrer">Listen on Apple Podcasts <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 03</span>
+        <span class="word-count">54<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">The Cognitive Revolution</h2>
+      <p class="host-line"><span class="host-name">Nathan Labenz</span> · Macro Strategy &amp; Disruption</p>
+      <div class="verdict heart"><span class="suit">♥</span> Play</div>
+      <p class="body-text">Nathan Labenz positions himself as an advance scout, and the framing is accurate. Where others report what shipped, he maps what it means for medicine, law, and education — three industries where the disruption timeline is measured in months, not years. The AI Scouting Reports are the single best condensed synthesis of foundation model capabilities you will find in audio format. A must for anyone advising a board or running a P&amp;L.</p>
+      <a class="listen-link" href="https://podcasts.apple.com/us/podcast/the-cognitive-revolution-ai-builders-researchers-and/id1669813431" target="_blank" rel="noopener noreferrer">Listen on Apple Podcasts <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 04</span>
+        <span class="word-count">77<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Dwarkesh Podcast</h2>
+      <p class="host-line"><span class="host-name">Dwarkesh Patel</span> · Frontier Models &amp; Infrastructure</p>
+      <div class="verdict diamond"><span class="suit">♦</span> Not yet — listen before you pitch</div>
+      <p class="body-text">Dwarkesh Patel does not ask the questions journalists ask. He does the reading, builds the model, then interrogates the guest on the specific points where the math gets uncomfortable. The result is a conversation that sounds like two people who actually know what they are talking about — a format so rare in AI media it functions as its own differentiator. Jensen Huang talking about compute constraints for three hours is not a podcast episode. It is primary source material. Add it to your feed before the next person you brief asks you a question you cannot answer.</p>
+      <a class="listen-link" href="https://podcasts.apple.com/us/podcast/dwarkesh-podcast/id1516093381" target="_blank" rel="noopener noreferrer">Listen on Apple Podcasts <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 05</span>
+        <span class="word-count">88<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Data Skeptic</h2>
+      <p class="host-line"><span class="host-name">Kyle Polich</span> · Critical Analysis &amp; Scientific Method</p>
+      <div class="verdict spade"><span class="suit">♠</span> Fold the vendor claims</div>
+      <p class="body-text">The AI media ecosystem has a chronic overclaiming problem. Every week, a new model is announced as a breakthrough, a new benchmark is gamed, and a new startup raises on a deck built from press releases. Data Skeptic has been applying the scientific method to these claims since before it was fashionable to do so. Kyle Polich structures the show in deep-dive seasons — committing months to a single topic like LLMs or time series rather than chasing the week's most retweeted paper. The result is one of the few AI podcasts where changing your mind is treated as the goal, not a side effect. If you have been burned by vendor hype and want a framework for evaluating claims, this is your antidote.</p>
+      <a class="listen-link" href="https://podcasts.apple.com/us/podcast/data-skeptic/id890348705" target="_blank" rel="noopener noreferrer">Listen on Apple Podcasts <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 06</span>
+        <span class="word-count">112<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Gradient Dissent</h2>
+      <p class="host-line"><span class="host-name">Lukas Biewald</span> · Model Training &amp; Enterprise Pipelines</p>
+      <div class="verdict diamond"><span class="suit">♦</span> Not yet — know the cost of the hand</div>
+      <p class="body-text">Most podcasts tell you what models can do. Gradient Dissent tells you what it actually costs to build them — in compute, in engineering hours, in failed experiments that never make the blog post. Hosted by Lukas Biewald, the founder of Weights and Biases, this show has an unfair structural advantage: his guests are the engineering leads at OpenAI, Meta, and Lyft, and they speak candidly because they trust the host understands the constraints they are operating under. The conversation consistently goes to places that public relations teams would prefer it did not. You will hear about hyperparameter failures, infrastructure debt, and the gap between benchmark performance and what a model actually does on production data. If your job involves convincing a CFO whether to build or buy an AI capability, the answer is rarely obvious — and this podcast is one of the best places to hear from the people who have been through that decision at scale. The hand is in play. Dissent is the price of good judgment.</p>
+      <a class="listen-link" href="https://podcasts.apple.com/us/podcast/gradient-dissent-conversations-on-ai/id1504567418" target="_blank" rel="noopener noreferrer">Listen on Apple Podcasts <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 07</span>
+        <span class="word-count">114<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">No Priors</h2>
+      <p class="host-line"><span class="host-name">Sarah Guo &amp; Elad Gil</span> · Venture Capital &amp; Startup Strategy</p>
+      <div class="verdict heart"><span class="suit">♥</span> Play — if you're at the table</div>
+      <p class="body-text">There is a category of AI conversation that happens exclusively in certain rooms — partner meetings, board calls, founder dinners where the real numbers get discussed. No Priors is the closest most professionals will ever get to that room without an invitation. Sarah Guo and Elad Gil are not journalists interpreting the industry from the outside. They are participants with capital deployed, pattern recognition earned across multiple cycles, and the kind of access that makes their guest list feel like a secondary index of who actually matters right now. The show does not waste time on hype. It asks which markets are exposed, which moats are real versus assumed, and which startups are building genuine infrastructure versus clever wrappers around someone else's API. For a CFO deciding where to place a bet on AI, or a consultant advising one, the signal density here is higher than almost anything else in the category. Listen to two episodes before forming an opinion. The name is honest: they come in without preconceptions, and they expect you to update yours.</p>
+      <a class="listen-link" href="https://podcasts.apple.com/us/podcast/no-priors-artificial-intelligence-technology-startups/id1668002688" target="_blank" rel="noopener noreferrer">Listen on Apple Podcasts <span class="arrow">↗</span></a>
+    </article>
+
+  </div>
+
+  <footer class="site">
+    <p>&ldquo;The shuffle. Word counts are not chosen — they are dealt. The deck: 21 · 52 · 54 · 77 · 88 · 112 · 114. Each entry draws one card. The constraint is the edit. That is The Joker's Cut.&rdquo;</p>
+    <a class="footer-cta" href="https://thejokerscut.gumroad.com/l/bond-traders-guide-ai-risk" target="_blank" rel="noopener noreferrer">
+      <span class="footer-cta-kicker">The First Cut · Book One</span>
+      <span class="footer-cta-title">The Bond Trader's Guide to AI Risk</span>
+      <span class="footer-cta-meta">Seven traps. Three verdicts. $9.11 →</span>
+    </a>
+    <p class="brand">The Joker's Cut</p>
+  </footer>
+</main>
+
+<img class="jester-mark" src="../assets/jester-mark.png" alt="" aria-hidden="true">
+
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The YouTube Cut — The Joker's Cut</title>
+<meta name="description" content="Seven AI YouTube channels, each dealt a fixed word count. The shuffle is the editorial — the constraint is the point.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --bg-card: #16151d;
+    --bg-card-border: #26242f;
+    --ink: #ececf1;
+    --ink-dim: #a5a3b0;
+    --ink-faint: #6b6976;
+    --accent: #7F77DD;
+    --accent-dim: rgba(127, 119, 221, 0.35);
+    --suit-heart: #d9647a;
+    --suit-spade: #c9c7d1;
+    --suit-diamond: #e0a45f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--bg); }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, var(--accent-dim), transparent),
+      var(--bg);
+  }
+
+  header.site {
+    padding: 4.5rem 1.5rem 3rem;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .kicker {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 1rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
+    line-height: 1.05;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .tagline {
+    color: var(--ink-dim);
+    font-size: 1.05rem;
+    max-width: 46ch;
+    margin: 0 auto 1.75rem;
+  }
+
+  .deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 0.6rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--ink-faint);
+  }
+
+  .deck span.num {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 1.25rem 5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 70%);
+    opacity: 0.8;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .card-id {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+
+  .word-count {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--accent);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .word-count .label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin-top: 0.3rem;
+    text-align: right;
+  }
+
+  .show-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.005em;
+  }
+
+  .host-line {
+    font-size: 0.88rem;
+    color: var(--ink-dim);
+    margin: 0 0 1rem;
+  }
+
+  .host-line .host-name {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    margin-bottom: 1.1rem;
+    border: 1px solid;
+  }
+
+  .verdict .suit {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .verdict.heart {
+    color: var(--suit-heart);
+    border-color: rgba(217, 100, 122, 0.4);
+    background: rgba(217, 100, 122, 0.08);
+  }
+
+  .verdict.spade {
+    color: var(--suit-spade);
+    border-color: rgba(201, 199, 209, 0.3);
+    background: rgba(201, 199, 209, 0.06);
+  }
+
+  .verdict.diamond {
+    color: var(--suit-diamond);
+    border-color: rgba(224, 164, 95, 0.4);
+    background: rgba(224, 164, 95, 0.08);
+  }
+
+  .body-text {
+    font-size: 0.97rem;
+    color: var(--ink-dim);
+    margin: 0 0 1.2rem;
+  }
+
+  .listen-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(127, 119, 221, 0.35);
+    padding-bottom: 0.1rem;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .listen-link:hover,
+  .listen-link:focus-visible {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .listen-link .arrow {
+    font-size: 0.9em;
+    transition: transform 0.2s ease;
+  }
+
+  .listen-link:hover .arrow {
+    transform: translate(1px, -1px);
+  }
+
+  .jester-mark {
+    position: fixed;
+    right: 1.1rem;
+    bottom: 1.1rem;
+    width: 34px;
+    height: auto;
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  footer.site {
+    max-width: 640px;
+    margin: 2rem auto 0;
+    padding: 2.5rem 1.5rem 0;
+    border-top: 1px solid var(--bg-card-border);
+    text-align: center;
+  }
+
+  footer.site p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    margin: 0 0 1.5rem;
+  }
+
+  footer.site .brand {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  @media (min-width: 700px) {
+    .card { padding: 2.1rem 2rem; }
+  }
+
+  .kicker-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .kicker-link:hover,
+  .kicker-link:focus-visible { opacity: 0.7; }
+
+  .footer-cta {
+    display: block;
+    text-align: left;
+    text-decoration: none;
+    background: var(--bg-card);
+    border: 1px solid var(--accent-dim);
+    border-radius: 12px;
+    padding: 1.2rem 1.3rem;
+    margin: 0 0 1.75rem;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .footer-cta:hover,
+  .footer-cta:focus-visible {
+    border-color: var(--accent);
+    background: rgba(127, 119, 221, 0.06);
+  }
+
+  .footer-cta:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .footer-cta-kicker {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .footer-cta-title {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--ink);
+    line-height: 1.25;
+    margin-bottom: 0.35rem;
+  }
+
+  .footer-cta-meta {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: var(--ink-dim);
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<header class="site">
+  <p class="kicker"><a class="kicker-link" href="../">← The Joker's Cut</a></p>
+  <h1>The YouTube Cut</h1>
+  <p class="tagline">Seven AI YouTube channels. Each summary dealt a fixed word count. The shuffle is the editorial — the constraint is the point.</p>
+  <div class="deck">
+    <span>The deck:</span>
+    <span class="num">24</span>·<span class="num">39</span>·<span class="num">58</span>·<span class="num">74</span>·<span class="num">90</span>·<span class="num">103</span>·<span class="num">119</span>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 01</span>
+        <span class="word-count">24<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Two Minute Papers</h2>
+      <p class="host-line"><span class="host-name">Károly Zsolnai-Fehér</span> · Research Made Visual</p>
+      <div class="verdict heart"><span class="suit">♥</span> Play</div>
+      <p class="body-text">Károly Zsolnai-Fehér turns thirty-page papers into five-minute visual summaries, showing generative video and physics before they hit mainstream. Fastest pulse-check on the bleeding edge.</p>
+      <a class="listen-link" href="https://www.youtube.com/@TwoMinutePapers" target="_blank" rel="noopener noreferrer">Watch Two Minute Papers <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 02</span>
+        <span class="word-count">39<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Yannic Kilcher</h2>
+      <p class="host-line"><span class="host-name">Yannic Kilcher</span> · Line-by-Line Paper Breakdowns</p>
+      <div class="verdict spade"><span class="suit">♠</span> Fold the flattery</div>
+      <p class="body-text">Yannic Kilcher reads the paper so you do not have to, walking the math and architecture on a literal whiteboard. What separates him is the willingness to call a flawed methodology flawed, an exaggerated claim exaggerated, receipts always included.</p>
+      <a class="listen-link" href="https://www.youtube.com/@YannicKilcher" target="_blank" rel="noopener noreferrer">Watch Yannic Kilcher <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 03</span>
+        <span class="word-count">58<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">AI Jason</h2>
+      <p class="host-line"><span class="host-name">Jason Zhou</span> · Applied Agentic Engineering</p>
+      <div class="verdict heart"><span class="suit">♥</span> Play — if you build</div>
+      <p class="body-text">AI Jason skips the theory and goes straight to the workflow: RAG pipelines, multi-agent orchestration, production-ready tools built live, right on screen. It is the rare channel that treats "building an agent" as an engineering problem with real tradeoffs, not a demo chasing a wow moment, and the code proves it, business case after case, tutorial after tutorial.</p>
+      <a class="listen-link" href="https://www.youtube.com/@AIJasonZ" target="_blank" rel="noopener noreferrer">Watch AI Jason <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 04</span>
+        <span class="word-count">74<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Sentdex</h2>
+      <p class="host-line"><span class="host-name">Harrison Kinsley</span> · From-Scratch Python &amp; ML</p>
+      <div class="verdict diamond"><span class="suit">♦</span> Not yet — from scratch takes time</div>
+      <p class="body-text">Harrison Kinsley has taught Python from first principles for over a decade, and his channel refuses every shortcut that would make content easier and understanding shallower. Reinforcement learning, self-driving simulations, neural networks: all built from scratch, no high-level library hiding the mechanics from you. This is not a channel for people in a hurry, it is for people who want to understand what is happening underneath the abstraction, one small piece at a time.</p>
+      <a class="listen-link" href="https://www.youtube.com/@sentdex" target="_blank" rel="noopener noreferrer">Watch Sentdex <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 05</span>
+        <span class="word-count">90<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">Andrej Karpathy</h2>
+      <p class="host-line"><span class="host-name">Andrej Karpathy</span> · Deep Learning From First Principles</p>
+      <div class="verdict heart"><span class="suit">♥</span> Play</div>
+      <p class="body-text">Andrej Karpathy helped found OpenAI and ran AI at Tesla, and teaches like someone who actually built the frontier rather than read about it secondhand. His long-form "let's build from scratch" sessions construct GPT tokenizers and backpropagation engines live, on screen, nothing hidden, no slides standing in for actual code that runs. "Neural Networks: Zero to Hero" is the closest thing to a free graduate course in deep learning online, taught by someone with nothing left to prove and every reason left to simply teach it well, start to finish.</p>
+      <a class="listen-link" href="https://www.youtube.com/@AndrejKarpathy" target="_blank" rel="noopener noreferrer">Watch Andrej Karpathy <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 06</span>
+        <span class="word-count">103<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">StatQuest</h2>
+      <p class="host-line"><span class="host-name">Josh Starmer</span> · Statistical Intuition, Built Up</p>
+      <div class="verdict diamond"><span class="suit">♦</span> Not yet — foundational, not frontier</div>
+      <p class="body-text">Josh Starmer's premise is that intimidating notation is a teaching failure, not a prerequisite, and StatQuest proves the point relentlessly, video after video, algorithm after algorithm. Principal component analysis, probability, transformer architecture: rebuilt as step-by-step visual reasoning, scaffolded so each video assumes only the one directly before it. It will not tell you what shipped this week or which benchmark just got beaten by a newer model. What it gives you instead is the foundation underneath the acronyms, the kind that makes every other channel on this list easier to follow once you have it. Not the frontier — the bedrock underneath it.</p>
+      <a class="listen-link" href="https://www.youtube.com/@statquest" target="_blank" rel="noopener noreferrer">Watch StatQuest <span class="arrow">↗</span></a>
+    </article>
+
+    <article class="card">
+      <div class="card-top">
+        <span class="card-id">Card 07</span>
+        <span class="word-count">119<span class="label">words</span></span>
+      </div>
+      <h2 class="show-name">AI Explained</h2>
+      <p class="host-line"><span class="host-name">AI Explained</span> · Sober Benchmark &amp; Capability Analysis</p>
+      <div class="verdict spade"><span class="suit">♠</span> Fold the press release</div>
+      <p class="body-text">Most AI channels repeat a company's press release with better editing and a friendlier tone. AI Explained tests the model instead: difficult logic and reasoning tasks designed to break the marketing claim, not confirm it for a thumbnail. That is the fold — it takes the industry's own benchmarks and runs them back through independent testing before vouching for anything, publicly, with failures included. The weekly roundups compress a chaotic week of releases into a dense, sober summary that treats your attention as finite and worth respecting, not a metric to maximize. A channel willing to say a benchmark does not mean what the announcement implies is doing something closer to journalism than most outlets that call themselves journalism.</p>
+      <a class="listen-link" href="https://www.youtube.com/@aiexplained-official" target="_blank" rel="noopener noreferrer">Watch AI Explained <span class="arrow">↗</span></a>
+    </article>
+
+  </div>
+
+  <footer class="site">
+    <p>&ldquo;The shuffle. Word counts are not chosen — they are dealt. The deck: 24 · 39 · 58 · 74 · 90 · 103 · 119. Each entry draws one card. The constraint is the edit. That is The Joker's Cut.&rdquo;</p>
+    <a class="footer-cta" href="https://thejokerscut.gumroad.com/l/bond-traders-guide-ai-risk" target="_blank" rel="noopener noreferrer">
+      <span class="footer-cta-kicker">The First Cut · Book One</span>
+      <span class="footer-cta-title">The Bond Trader's Guide to AI Risk</span>
+      <span class="footer-cta-meta">Seven traps. Three verdicts. $9.11 →</span>
+    </a>
+    <p class="brand">The Joker's Cut</p>
+  </footer>
+</main>
+
+<img class="jester-mark" src="../assets/jester-mark.png" alt="" aria-hidden="true">
+
+</body>
+</html>

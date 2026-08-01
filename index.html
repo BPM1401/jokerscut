@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Joker's Cut</title>
+<meta name="description" content="An editorial system dealt in cuts. Seven entries, a fixed deck of word counts, a verdict for each. The shuffle is the editorial.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --bg-card: #16151d;
+    --bg-card-border: #26242f;
+    --ink: #ececf1;
+    --ink-dim: #a5a3b0;
+    --ink-faint: #6b6976;
+    --accent: #7F77DD;
+    --accent-dim: rgba(127, 119, 221, 0.35);
+    --suit-heart: #d9647a;
+    --suit-spade: #c9c7d1;
+    --suit-diamond: #e0a45f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--bg); }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, var(--accent-dim), transparent),
+      var(--bg);
+  }
+
+  header.site {
+    padding: 4rem 1.5rem 2.5rem;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .logo-mark {
+    width: 128px;
+    height: auto;
+    margin: 0 auto 1.75rem;
+    display: block;
+    filter: drop-shadow(0 0 22px var(--accent-dim));
+    animation: float 7s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(-1.5deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-mark { animation: none; }
+  }
+
+  .kicker {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 1rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 9vw, 4.2rem);
+    line-height: 1.05;
+    margin: 0 0 1.1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .tagline {
+    color: var(--ink-dim);
+    font-size: 1.05rem;
+    max-width: 52ch;
+    margin: 0 auto;
+  }
+
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 5rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .site-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    overflow: hidden;
+  }
+
+  .site-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 70%);
+    opacity: 0.8;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .medium-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+
+  .status-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    border: 1px solid var(--bg-card-border);
+    border-radius: 999px;
+    padding: 0.25rem 0.65rem;
+    white-space: nowrap;
+  }
+
+  .site-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.65rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.005em;
+  }
+
+  .site-desc {
+    font-size: 0.95rem;
+    color: var(--ink-dim);
+    margin: 0 0 1.2rem;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bg-card-border);
+  }
+
+  .deck-preview {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+  }
+
+  .deck-preview .num { color: var(--accent); font-weight: 700; }
+
+  .verdict-tally {
+    display: flex;
+    gap: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .verdict-tally .heart { color: var(--suit-heart); }
+  .verdict-tally .spade { color: var(--suit-spade); }
+  .verdict-tally .diamond { color: var(--suit-diamond); }
+
+  .site-card.ghost {
+    border-style: dashed;
+    background: transparent;
+    opacity: 0.55;
+  }
+
+  .site-card.ghost::before { display: none; }
+
+  .site-card.ghost .site-name { color: var(--ink-faint); }
+
+  footer.site {
+    max-width: 640px;
+    margin: 1rem auto 0;
+    padding: 2.5rem 1.5rem 0;
+    border-top: 1px solid var(--bg-card-border);
+    text-align: center;
+  }
+
+  footer.site p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    margin: 0 0 1.5rem;
+  }
+
+  footer.site .brand {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  @media (min-width: 700px) {
+    .site-card { padding: 2.1rem 2rem; }
+  }
+
+  a.card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  a.card-link:hover .site-card,
+  a.card-link:focus-visible .site-card {
+    border-color: var(--accent-dim);
+  }
+
+  a.card-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    margin: 0 0 1.1rem;
+  }
+
+  .first-cut {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--accent-dim);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+  }
+
+  .first-cut::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--suit-diamond));
+  }
+
+  .status-tag.status-live {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+  }
+
+  .first-cut-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(1.75rem, 5vw, 2.2rem);
+    line-height: 1.15;
+    margin: 0 0 0.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  .first-cut-desc {
+    font-size: 1rem;
+    color: var(--ink-dim);
+    margin: 0 0 1.2rem;
+    max-width: 54ch;
+  }
+
+  .doors {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-top: 1.4rem;
+  }
+
+  .door {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--bg-card-border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.015);
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .door:hover,
+  .door:focus-visible {
+    border-color: var(--accent);
+    background: rgba(127, 119, 221, 0.07);
+  }
+
+  .door:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .door-label {
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+
+  .door-price {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
+
+  .door-primary {
+    border-color: var(--accent-dim);
+  }
+
+  .door-primary .door-price {
+    color: var(--accent);
+  }
+
+  @media (min-width: 700px) {
+    .first-cut { padding: 2.1rem 2rem; }
+    .doors { grid-template-columns: repeat(3, 1fr); }
+    .door {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+      padding: 1rem 1.1rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<header class="site">
+  <img class="logo-mark" src="assets/jester-mark.png" alt="The Joker's Cut">
+  <p class="kicker">An Editorial System, Dealt in Cuts</p>
+  <h1>The Joker's Cut</h1>
+  <p class="tagline">Every cut follows the same rule: seven entries, a fixed deck of word counts, a verdict for each — Play, Fold, or Not Yet. The deck doesn't change the rules. It only changes what gets dealt. Here's what's in play so far.</p>
+</header>
+
+<main>
+
+  <section class="first-cut">
+    <div class="card-top">
+      <span class="medium-tag">The First Cut · Books</span>
+      <span class="status-tag status-live">Live now</span>
+    </div>
+    <h2 class="first-cut-name">The Bond Trader's Guide to AI Risk</h2>
+    <p class="first-cut-desc">Seven traps blindsiding mid-market CEOs, each dealt a verdict. Fixed income discipline applied to every AI decision your company faces.</p>
+    <div class="card-meta">
+      <span class="deck-preview">Deck: <span class="num">7</span> traps</span>
+      <span class="verdict-tally"><span class="heart">♥ Play</span><span class="spade">♠ Fold</span><span class="diamond">♦ Not Yet</span></span>
+    </div>
+    <div class="doors">
+      <a class="door" href="https://www.linkedin.com/pulse/i-ran-100m-business-sold-jgbs-jp-morgan-here-no-hype-truth-chugani-cllxc" target="_blank" rel="noopener noreferrer">
+        <span class="door-label">Read the article</span>
+        <span class="door-price">Free</span>
+      </a>
+      <a class="door" href="https://thejokerscut.gumroad.com/l/I-recognize-the-shape" target="_blank" rel="noopener noreferrer">
+        <span class="door-label">The seven traps, one page</span>
+        <span class="door-price">Free</span>
+      </a>
+      <a class="door door-primary" href="https://thejokerscut.gumroad.com/l/bond-traders-guide-ai-risk" target="_blank" rel="noopener noreferrer">
+        <span class="door-label">Get the book</span>
+        <span class="door-price">$9.11</span>
+      </a>
+    </div>
+  </section>
+
+  <p class="section-label">The other cuts</p>
+
+  <div class="grid">
+
+    <a class="card-link" href="pod/">
+      <article class="site-card">
+        <div class="card-top">
+          <span class="medium-tag">Podcasts</span>
+          <span class="status-tag">Live</span>
+        </div>
+        <h2 class="site-name">The Pod Cut</h2>
+        <p class="site-desc">Seven AI podcasts, each summarized in a word count it didn't choose. Technical rigor over hype, one verdict per host.</p>
+        <div class="card-meta">
+          <span class="deck-preview">Deck: <span class="num">21</span>·<span class="num">52</span>·<span class="num">54</span>·<span class="num">77</span>·<span class="num">88</span>·<span class="num">112</span>·<span class="num">114</span></span>
+          <span class="verdict-tally"><span class="heart">♥ 3</span><span class="spade">♠ 2</span><span class="diamond">♦ 2</span></span>
+        </div>
+      </article>
+    </a>
+
+    <a class="card-link" href="newsletter/">
+      <article class="site-card">
+        <div class="card-top">
+          <span class="medium-tag">Newsletters</span>
+          <span class="status-tag">Live</span>
+        </div>
+        <h2 class="site-name">The Newsletter Cut</h2>
+        <p class="site-desc">Seven AI newsletters, cut from a KDnuggets shortlist and dealt their own deck. Signal over inbox noise.</p>
+        <div class="card-meta">
+          <span class="deck-preview">Deck: <span class="num">18</span>·<span class="num">46</span>·<span class="num">63</span>·<span class="num">81</span>·<span class="num">95</span>·<span class="num">108</span>·<span class="num">126</span></span>
+          <span class="verdict-tally"><span class="heart">♥ 4</span><span class="spade">♠ 1</span><span class="diamond">♦ 2</span></span>
+        </div>
+      </article>
+    </a>
+
+    <a class="card-link" href="youtube/">
+      <article class="site-card">
+        <div class="card-top">
+          <span class="medium-tag">YouTube</span>
+          <span class="status-tag">Live</span>
+        </div>
+        <h2 class="site-name">The YouTube Cut</h2>
+        <p class="site-desc">Seven AI YouTube channels, from paper breakdowns to from-scratch builds. Its own deck, its own verdicts.</p>
+        <div class="card-meta">
+          <span class="deck-preview">Deck: <span class="num">24</span>·<span class="num">39</span>·<span class="num">58</span>·<span class="num">74</span>·<span class="num">90</span>·<span class="num">103</span>·<span class="num">119</span></span>
+          <span class="verdict-tally"><span class="heart">♥ 3</span><span class="spade">♠ 2</span><span class="diamond">♦ 2</span></span>
+        </div>
+      </article>
+    </a>
+
+    <article class="site-card ghost">
+      <div class="card-top">
+        <span class="medium-tag">Next Cut</span>
+        <span class="status-tag">Dealing soon</span>
+      </div>
+      <h2 class="site-name">TBD</h2>
+      <p class="site-desc">Another deck, dealt when there's a shortlist worth cutting down. Not forced — earned.</p>
+    </article>
+
+  </div>
+
+  <footer class="site">
+    <p>&ldquo;The deck doesn't change the rules. It only changes what you're dealt. Three cuts in — more when they're earned, not before. That is The Joker's Cut.&rdquo;</p>
+    <p class="brand">The Joker's Cut</p>
+  </footer>
+</main>
+
+</body>
+</html>
