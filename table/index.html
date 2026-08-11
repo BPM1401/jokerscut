@@ -18,6 +18,9 @@
     --ink-faint: #6b6976;
     --accent: #7F77DD;
     --accent-dim: rgba(127, 119, 221, 0.35);
+    --suit-heart: #d9647a;
+    --suit-spade: #c9c7d1;
+    --suit-diamond: #e0a45f;
   }
 
   * { box-sizing: border-box; }
@@ -147,6 +150,115 @@
     margin: 2.5rem auto 0;
     opacity: 0.18;
   }
+
+  .site-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    overflow: hidden;
+  }
+
+  .site-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 70%);
+    opacity: 0.8;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .medium-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+
+  .status-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    border: 1px solid var(--bg-card-border);
+    border-radius: 999px;
+    padding: 0.25rem 0.65rem;
+    white-space: nowrap;
+  }
+
+  .site-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.65rem;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.005em;
+  }
+
+  .site-desc {
+    font-size: 0.95rem;
+    color: var(--ink-dim);
+    margin: 0 0 1.2rem;
+  }
+
+  .card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bg-card-border);
+  }
+
+  .deck-preview {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+  }
+
+  .deck-preview .num { color: var(--accent); font-weight: 700; }
+
+  .verdict-tally {
+    display: flex;
+    gap: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .verdict-tally .heart { color: var(--suit-heart); }
+  .verdict-tally .spade { color: var(--suit-spade); }
+  .verdict-tally .diamond { color: var(--suit-diamond); }
+
+  a.card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 14px;
+    transition: border-color 0.2s ease;
+  }
+
+  a.card-link:hover .site-card,
+  a.card-link:focus-visible .site-card {
+    border-color: var(--accent-dim);
+  }
+
+  a.card-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
 </style>
 </head>
 <body>
@@ -170,7 +282,20 @@
 
     <p>Five articles. Pot odds, expected value, variance, bankroll management. The foundations, dealt one hand at a time.</p>
 
-    <a class="cta-link" href="https://jokerscut.com/stats/">The Stats Cut →</a>
+    <a class="card-link" href="../stats/">
+      <article class="site-card">
+        <div class="card-top">
+          <span class="medium-tag">Statistics</span>
+          <span class="status-tag">Live</span>
+        </div>
+        <h2 class="site-name">The Stats Cut</h2>
+        <p class="site-desc">Five articles on probability and statistics through Texas Hold 'Em.</p>
+        <div class="card-meta">
+          <span class="deck-preview">Deck: <span class="num">31</span>·<span class="num">49</span>·<span class="num">72</span>·<span class="num">96</span>·<span class="num">118</span></span>
+          <span class="verdict-tally"><span class="heart">♥ Play</span><span class="spade">♠ Fold</span><span class="diamond">♦ Not Yet</span></span>
+        </div>
+      </article>
+    </a>
 
     <hr>
 
