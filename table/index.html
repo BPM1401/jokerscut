@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Table — The Joker's Cut</title>
+<meta name="description" content="Probability and statistics, taught the way a trader learns them. Through the game.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --bg-card: #16151d;
+    --bg-card-border: #26242f;
+    --ink: #ececf1;
+    --ink-dim: #a5a3b0;
+    --ink-faint: #6b6976;
+    --accent: #7F77DD;
+    --accent-dim: rgba(127, 119, 221, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, var(--accent-dim), transparent),
+      var(--bg);
+  }
+
+  header.site {
+    padding: 4.5rem 1.5rem 3rem;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .kicker {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 1rem;
+  }
+
+  .kicker-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .kicker-link:hover { text-decoration: underline; }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
+    line-height: 1.05;
+    margin: 0 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .tagline {
+    color: var(--ink-dim);
+    font-size: 1.1rem;
+    max-width: 46ch;
+    margin: 0 auto;
+  }
+
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.25rem 5rem;
+  }
+
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .prose p {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--ink-dim);
+  }
+
+  .prose p.lead {
+    color: var(--ink);
+  }
+
+  .prose hr {
+    border: none;
+    border-top: 1px solid var(--bg-card-border);
+    margin: 0.5rem 0;
+  }
+
+  .cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    align-self: flex-start;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .cta-link:hover {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  footer.site {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    font-size: 0.88rem;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--bg-card-border);
+    margin-top: 2rem;
+  }
+
+  .brand { margin: 0; }
+
+  .jester-mark {
+    display: block;
+    width: 56px;
+    margin: 2.5rem auto 0;
+    opacity: 0.18;
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<header class="site">
+  <p class="kicker"><a class="kicker-link" href="../">← The Joker's Cut</a></p>
+  <h1>The Table</h1>
+  <p class="tagline">The game teaches what the classroom doesn't.</p>
+</header>
+
+<main>
+  <div class="prose">
+
+    <p>Probability and statistics, taught the way a trader learns them. Through the game.</p>
+
+    <p class="lead">Every hand in Texas Hold 'Em is a decision under uncertainty. So is every AI investment, every vendor contract, every build-or-buy call your company will make this year. The math is the same. The table is just more honest about the stakes.</p>
+
+    <p>Start here. It's free.</p>
+
+    <p>Five articles. Pot odds, expected value, variance, bankroll management. The foundations, dealt one hand at a time.</p>
+
+    <a class="cta-link" href="https://jokerscut.com/stats/">The Stats Cut →</a>
+
+    <hr>
+
+    <p>What comes next is being built.</p>
+
+    <p>If you want to know when the seat opens, find me on LinkedIn and send a DM.</p>
+
+    <a class="cta-link" href="https://www.linkedin.com/in/vc1401" target="_blank" rel="noopener noreferrer">LinkedIn →</a>
+
+  </div>
+
+  <footer class="site">
+    <p class="brand"><a href="https://jokerscut.com" style="color: inherit; text-decoration: none;">The Joker's Cut</a></p>
+  </footer>
+
+  <img class="jester-mark" src="../assets/jester-mark.png" alt="" aria-hidden="true">
+</main>
+
+</body>
+</html>
